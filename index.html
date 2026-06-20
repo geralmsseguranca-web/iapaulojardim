@@ -89,34 +89,65 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 .bubble-card p{margin-bottom:8px}
 .bubble-card p:last-child{margin-bottom:0}
 
-/* ── HTML PREVIEW CARD ── */
-.html-card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:var(--radius);overflow:hidden;
-  box-shadow:var(--shadow);margin-top:4px;
-  max-width:calc(100% - 44px);width:100%;
+/* ── FILE CARD (estilo Claude) ── */
+.file-card-wrap{
+  display:flex;flex-direction:column;gap:8px;
+  max-width:calc(100% - 44px);
+  margin-left:42px;
   animation:fadeUp .25s ease;
 }
-.html-card-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 16px;
-  background:#0D1020;border-bottom:1px solid var(--border);
+.file-card{
+  display:flex;align-items:center;gap:14px;
+  background:#FFFFFF0D;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px 16px;
+  cursor:pointer;
+  transition:background .18s,border-color .18s;
+  width:100%;max-width:340px;
+  text-decoration:none;
+  position:relative;
+  overflow:hidden;
 }
-.html-card-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--accent)}
-.html-card-title svg{width:14px;height:14px;fill:var(--accent)}
-.html-card-actions{display:flex;gap:6px}
-.hc-btn{
-  display:flex;align-items:center;gap:5px;
+.file-card:hover{background:#FFFFFF18;border-color:var(--primary)}
+.file-card-icon{
+  width:52px;height:52px;flex-shrink:0;
+  background:#1A1F35;
+  border:1px solid var(--border);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#7B8FCC;
+  letter-spacing:-.5px;
+}
+.file-card-info{flex:1;min-width:0}
+.file-card-name{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file-card-meta{font-size:12px;color:var(--muted);margin-top:3px}
+.file-card-arrow{color:var(--muted);flex-shrink:0}
+.file-card-arrow svg{width:16px;height:16px}
+
+/* action row under card */
+.file-actions{display:flex;gap:8px;flex-wrap:wrap}
+.fa-btn{
+  display:flex;align-items:center;gap:6px;
   background:var(--card);border:1px solid var(--border);
-  border-radius:6px;padding:5px 10px;
-  font-size:11px;font-weight:600;color:var(--muted);
+  border-radius:8px;padding:7px 14px;
+  font-size:12px;font-weight:500;color:var(--muted);
   cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;
 }
-.hc-btn:hover{border-color:var(--primary);color:var(--primary)}
-.hc-btn.dl{background:var(--user-grad);border-color:transparent;color:#fff}
-.hc-btn.dl:hover{filter:brightness(1.1)}
-.hc-btn svg{width:12px;height:12px}
-.html-card iframe{width:100%;height:320px;border:none;background:#fff;display:block}
+.fa-btn:hover{border-color:var(--primary);color:var(--primary)}
+.fa-btn.primary{background:var(--user-grad);border-color:transparent;color:#fff}
+.fa-btn.primary:hover{filter:brightness(1.1)}
+.fa-btn svg{width:13px;height:13px}
+
+/* preview iframe */
+.file-preview{
+  width:100%;max-width:340px;
+  border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;
+  display:none;
+}
+.file-preview.open{display:block}
+.file-preview iframe{width:100%;height:320px;border:none;background:#fff;display:block}
 
 /* typing */
 .typing-dots{display:flex;align-items:center;gap:5px;padding:4px 0}
@@ -125,9 +156,40 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 .typing-dots span:nth-child(3){animation-delay:.4s}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 
+/* ATTACH BUTTON */
+#attach-btn{background:var(--card);color:var(--muted);border:1px solid var(--border);flex-shrink:0}
+#attach-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ATTACHMENT STRIP */
+#attach-strip{display:flex;flex-wrap:wrap;gap:8px;padding:0 0 8px 0}
+#attach-strip:empty{display:none}
+.att-thumb{
+  position:relative;border-radius:10px;overflow:hidden;
+  border:1px solid var(--border);background:var(--card);
+  display:flex;align-items:center;gap:8px;
+  padding:6px 10px;max-width:180px;
+  animation:fadeUp .2s ease;
+}
+.att-thumb img{width:40px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0}
+.att-thumb .att-icon{width:36px;height:36px;border-radius:6px;background:#0D1020;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#7B8FCC;flex-shrink:0}
+.att-info{min-width:0}
+.att-name{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100px}
+.att-type{font-size:10px;color:var(--muted)}
+.att-remove{
+  position:absolute;top:4px;right:4px;
+  width:16px;height:16px;border-radius:50%;
+  background:rgba(0,0,0,.6);border:none;
+  color:#fff;font-size:10px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  line-height:1;
+}
+.att-remove:hover{background:var(--danger)}
+
+/* image preview in chat bubble */
+.msg-img{max-width:240px;border-radius:10px;margin-top:6px;display:block;border:1px solid var(--border)}
 /* INPUT */
 #input-wrap{background:var(--surface);border-top:1px solid var(--border);padding:14px 20px;flex-shrink:0}
-.input-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:flex-end;gap:8px;padding:10px 10px 10px 16px;transition:border-color .2s,box-shadow .2s}
+.input-card{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);display:flex;align-items:flex-end;gap:8px;padding:10px 10px 10px 16px;transition:border-color .2s,box-shadow .2s}
 .input-card:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px var(--glow)}
 #user-input{flex:1;background:transparent;border:none;outline:none;font-size:14px;color:var(--text);resize:none;min-height:24px;max-height:120px;line-height:1.5;font-family:'Inter',sans-serif}
 #user-input::placeholder{color:var(--muted)}
@@ -227,8 +289,15 @@ Para outras perguntas, responda normalmente em português do Brasil.</textarea>
   </div>
 </div>
 
+<input type="file" id="file-input" accept="image/*,.html,.htm,.txt,.csv,.json,.md" style="display:none" multiple/>
+
 <div id="input-wrap">
+  <!-- attachment preview strip -->
+  <div id="attach-strip"></div>
   <div class="input-card">
+    <button class="btn-icon" id="attach-btn" title="Anexar arquivo ou foto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
     <textarea id="user-input" rows="1" placeholder="Peça uma página HTML ou faça qualquer pergunta…"></textarea>
     <div class="action-btns">
       <button class="btn-icon" id="clear-btn" title="Nova conversa">
@@ -239,31 +308,112 @@ Para outras perguntas, responda normalmente em português do Brasil.</textarea>
       </button>
     </div>
   </div>
-  <div class="hint">Enter para enviar · Shift+Enter para nova linha</div>
+  <div class="hint">Enter para enviar · Shift+Enter para nova linha · <span style="opacity:.6">+ para anexar</span></div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-const apiKeyEl  = document.getElementById('api-key');
-const modelEl   = document.getElementById('model-sel');
-const sysToggle = document.getElementById('sys-toggle');
-const sysPanel  = document.getElementById('sys-panel');
+const apiKeyEl    = document.getElementById('api-key');
+const modelEl     = document.getElementById('model-sel');
+const sysToggle   = document.getElementById('sys-toggle');
+const sysPanel    = document.getElementById('sys-panel');
 const sysPromptEl = document.getElementById('sys-prompt');
-const msgsEl    = document.getElementById('messages');
-const emptyEl   = document.getElementById('empty-state');
-const inputEl   = document.getElementById('user-input');
-const sendBtn   = document.getElementById('send-btn');
-const clearBtn  = document.getElementById('clear-btn');
-const dot       = document.getElementById('dot');
-const statusTxt = document.getElementById('status-txt');
-const toastEl   = document.getElementById('toast');
+const msgsEl      = document.getElementById('messages');
+const emptyEl     = document.getElementById('empty-state');
+const inputEl     = document.getElementById('user-input');
+const sendBtn     = document.getElementById('send-btn');
+const clearBtn    = document.getElementById('clear-btn');
+const attachBtn   = document.getElementById('attach-btn');
+const fileInput   = document.getElementById('file-input');
+const attachStrip = document.getElementById('attach-strip');
+const dot         = document.getElementById('dot');
+const statusTxt   = document.getElementById('status-txt');
+const toastEl     = document.getElementById('toast');
 
-let history = [];
-let busy = false;
+let history     = [];
+let busy        = false;
 let htmlCounter = 0;
+let attachments = []; // [{name, type, dataUrl, text, isImage}]
 
-// ── auto-resize ──
+// ── Attach button ──
+attachBtn.addEventListener('click', () => fileInput.click());
+
+fileInput.addEventListener('change', () => {
+  Array.from(fileInput.files).forEach(file => readFile(file));
+  fileInput.value = '';
+});
+
+function readFile(file) {
+  const isImage = file.type.startsWith('image/');
+  const reader  = new FileReader();
+
+  if (isImage) {
+    reader.onload = e => {
+      attachments.push({ name: file.name, type: file.type, dataUrl: e.target.result, isImage: true });
+      renderStrip();
+      updateBtn();
+    };
+    reader.readAsDataURL(file);
+  } else {
+    reader.onload = e => {
+      attachments.push({ name: file.name, type: file.type, text: e.target.result, isImage: false });
+      renderStrip();
+      updateBtn();
+    };
+    reader.readAsText(file);
+  }
+}
+
+function renderStrip() {
+  attachStrip.innerHTML = '';
+  attachments.forEach((att, i) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'att-thumb';
+
+    if (att.isImage) {
+      const img = document.createElement('img');
+      img.src = att.dataUrl;
+      thumb.appendChild(img);
+    } else {
+      const ic = document.createElement('div');
+      ic.className = 'att-icon';
+      const ext = att.name.split('.').pop().toUpperCase();
+      ic.textContent = ext.length <= 4 ? ext : 'FILE';
+      thumb.appendChild(ic);
+    }
+
+    const info = document.createElement('div');
+    info.className = 'att-info';
+    const nm = document.createElement('div');
+    nm.className = 'att-name';
+    nm.textContent = att.name;
+    const tp = document.createElement('div');
+    tp.className = 'att-type';
+    tp.textContent = att.isImage ? 'Imagem' : 'Arquivo de texto';
+    info.appendChild(nm);
+    info.appendChild(tp);
+    thumb.appendChild(info);
+
+    const rm = document.createElement('button');
+    rm.className = 'att-remove';
+    rm.textContent = '×';
+    rm.addEventListener('click', () => {
+      attachments.splice(i, 1);
+      renderStrip();
+      updateBtn();
+    });
+    thumb.appendChild(rm);
+    attachStrip.appendChild(thumb);
+  });
+}
+
+// drag & drop support
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', e => {
+  e.preventDefault();
+  Array.from(e.dataTransfer.files).forEach(f => readFile(f));
+});
 inputEl.addEventListener('input', () => {
   inputEl.style.height = 'auto';
   inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + 'px';
@@ -312,7 +462,8 @@ function updateStatus() {
 }
 
 function updateBtn() {
-  sendBtn.disabled = busy || !apiKeyEl.value.trim().startsWith('gsk_') || !inputEl.value.trim();
+  const hasContent = inputEl.value.trim() || attachments.length > 0;
+  sendBtn.disabled = busy || !apiKeyEl.value.trim().startsWith('gsk_') || !hasContent;
 }
 
 // ── Detect & extract HTML blocks ──
@@ -360,7 +511,7 @@ function renderText(text) {
 }
 
 // ── Add message bubble ──
-function addMsg(role, text) {
+function addMsg(role, text, atts) {
   emptyEl.style.display = 'none';
 
   const row = document.createElement('div');
@@ -383,7 +534,28 @@ function addMsg(role, text) {
   if (role === 'ai') {
     bubble.innerHTML = renderText(text);
   } else {
-    bubble.textContent = text;
+    if (text) {
+      const p = document.createElement('div');
+      p.textContent = text;
+      bubble.appendChild(p);
+    }
+    // show attachments inside user bubble
+    if (atts && atts.length) {
+      atts.forEach(att => {
+        if (att.isImage) {
+          const img = document.createElement('img');
+          img.src = att.dataUrl;
+          img.className = 'msg-img';
+          img.alt = att.name;
+          bubble.appendChild(img);
+        } else {
+          const fc = document.createElement('div');
+          fc.style.cssText = 'display:flex;align-items:center;gap:6px;margin-top:6px;background:rgba(255,255,255,.12);border-radius:8px;padding:6px 10px;font-size:12px';
+          fc.innerHTML = `<span>📄</span><span style="font-weight:600">${att.name}</span>`;
+          bubble.appendChild(fc);
+        }
+      });
+    }
   }
 
   col.appendChild(name);
@@ -392,7 +564,7 @@ function addMsg(role, text) {
   row.appendChild(col);
   msgsEl.appendChild(row);
 
-  // If AI response contains HTML → render preview card
+  // If AI response contains HTML → render file card
   if (role === 'ai') {
     const htmlCode = extractHTML(text);
     if (htmlCode) {
@@ -405,31 +577,63 @@ function addMsg(role, text) {
   msgsEl.scrollTop = msgsEl.scrollHeight;
 }
 
-// ── Build HTML preview card ──
+// ── Build Claude-style file card ──
 function buildHTMLCard(code, filename) {
+  const wrap = document.createElement('div');
+  wrap.className = 'file-card-wrap';
+
+  // ── main card (click = download) ──
   const card = document.createElement('div');
-  card.className = 'html-card';
+  card.className = 'file-card';
+  card.title = 'Clique para baixar';
 
-  const header = document.createElement('div');
-  header.className = 'html-card-header';
+  const icon = document.createElement('div');
+  icon.className = 'file-card-icon';
+  icon.textContent = '</>';
 
-  const title = document.createElement('div');
-  title.className = 'html-card-title';
-  title.innerHTML = `<svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg> ${filename}`;
+  const info = document.createElement('div');
+  info.className = 'file-card-info';
 
+  const nameEl = document.createElement('div');
+  nameEl.className = 'file-card-name';
+  nameEl.textContent = filename;
+
+  const meta = document.createElement('div');
+  meta.className = 'file-card-meta';
+  meta.textContent = 'Código · HTML';
+
+  info.appendChild(nameEl);
+  info.appendChild(meta);
+
+  const arrow = document.createElement('div');
+  arrow.className = 'file-card-arrow';
+  arrow.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z"/></svg>`;
+
+  card.appendChild(icon);
+  card.appendChild(info);
+  card.appendChild(arrow);
+
+  // click card = download
+  card.addEventListener('click', () => downloadHTML(code, filename));
+
+  // ── action row ──
   const actions = document.createElement('div');
-  actions.className = 'html-card-actions';
+  actions.className = 'file-actions';
 
-  // Preview toggle
   const prevBtn = document.createElement('button');
-  prevBtn.className = 'hc-btn';
-  prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Preview`;
+  prevBtn.className = 'fa-btn';
+  prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Visualizar`;
 
-  // Download
   const dlBtn = document.createElement('button');
-  dlBtn.className = 'hc-btn dl';
-  dlBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="white" width="12" height="12"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z"/></svg> Baixar`;
+  dlBtn.className = 'fa-btn primary';
+  dlBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z"/></svg> Baixar`;
 
+  actions.appendChild(prevBtn);
+  actions.appendChild(dlBtn);
+
+  // ── preview pane ──
+  const preview = document.createElement('div');
+  preview.className = 'file-preview';
   let previewOpen = false;
   let iframe = null;
 
@@ -440,31 +644,33 @@ function buildHTMLCard(code, filename) {
       iframe.sandbox = 'allow-scripts allow-same-origin';
       const blob = new Blob([code], { type: 'text/html' });
       iframe.src = URL.createObjectURL(blob);
-      card.appendChild(iframe);
-      prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Fechar`;
+      preview.appendChild(iframe);
+      preview.classList.add('open');
+      prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Fechar`;
     } else {
-      if (iframe) { card.removeChild(iframe); iframe = null; }
-      prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Preview`;
+      preview.classList.remove('open');
+      if (iframe) { preview.removeChild(iframe); iframe = null; }
+      prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Visualizar`;
     }
+    msgsEl.scrollTop = msgsEl.scrollHeight;
   });
 
-  dlBtn.addEventListener('click', () => {
-    const blob = new Blob([code], { type: 'text/html' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  });
+  dlBtn.addEventListener('click', () => downloadHTML(code, filename));
 
-  actions.appendChild(prevBtn);
-  actions.appendChild(dlBtn);
-  header.appendChild(title);
-  header.appendChild(actions);
-  card.appendChild(header);
+  wrap.appendChild(card);
+  wrap.appendChild(actions);
+  wrap.appendChild(preview);
+  return wrap;
+}
 
-  return card;
+function downloadHTML(code, filename) {
+  const blob = new Blob([code], { type: 'text/html' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 // ── Typing indicator ──
@@ -501,31 +707,71 @@ async function send() {
   const key   = apiKeyEl.value.trim();
   const model = modelEl.value;
   const sys   = sysPromptEl.value.trim();
-  if (!text || !key || busy) return;
+  const hasContent = text || attachments.length > 0;
+  if (!hasContent || !key || busy) return;
 
-  history.push({ role:'user', content:text });
-  addMsg('user', text);
+  // Build user message content for API
+  const hasImages = attachments.some(a => a.isImage);
+  const supportsVision = model.includes('llama-4') || model.includes('maverick') || model.includes('scout');
+
+  let userContent;
+
+  if (hasImages && supportsVision) {
+    // multimodal content array
+    userContent = [];
+    if (text) userContent.push({ type: 'text', text });
+    attachments.forEach(att => {
+      if (att.isImage) {
+        userContent.push({
+          type: 'image_url',
+          image_url: { url: att.dataUrl }
+        });
+      } else {
+        userContent.push({ type: 'text', text: `\n\n--- Arquivo: ${att.name} ---\n${att.text}` });
+      }
+    });
+  } else {
+    // text-only: embed files as text, warn about images if model doesn't support vision
+    let combined = text || '';
+    attachments.forEach(att => {
+      if (att.isImage) {
+        combined += `\n\n[Imagem anexada: ${att.name} — use Llama 4 Scout/Maverick para analisar imagens]`;
+      } else {
+        combined += `\n\n--- Arquivo: ${att.name} ---\n${att.text}`;
+      }
+    });
+    userContent = combined.trim();
+  }
+
+  // Show user message in UI
+  const displayText = text || (attachments.length === 1 ? attachments[0].name : `${attachments.length} anexos`);
+  const currentAttachments = [...attachments];
+
+  history.push({ role: 'user', content: userContent });
+  addMsg('user', displayText, currentAttachments);
+
   inputEl.value = ''; inputEl.style.height = 'auto';
+  attachments = []; renderStrip();
 
   busy = true; updateBtn();
   addTyping();
   dot.className = 'dot busy'; statusTxt.textContent = 'Gerando…';
 
   const payload = [];
-  if (sys) payload.push({ role:'system', content:sys });
+  if (sys) payload.push({ role: 'system', content: sys });
   payload.push(...history);
 
   try {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},
-      body: JSON.stringify({ model, messages:payload, temperature:0.7, max_tokens:4096 })
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+      body: JSON.stringify({ model, messages: payload, temperature: 0.7, max_tokens: 4096 })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error?.message || `Erro ${res.status}`);
 
     const reply = data.choices?.[0]?.message?.content || '(sem resposta)';
-    history.push({ role:'assistant', content:reply });
+    history.push({ role: 'assistant', content: reply });
     removeTyping();
     addMsg('ai', reply);
     dot.className = 'dot ready'; statusTxt.textContent = 'Pronto';
