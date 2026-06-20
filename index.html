@@ -97,17 +97,64 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 .msg-row.ai .bubble-card{border-bottom-left-radius:4px}
 
 /* ── CODE BLOCK inside bubble ── */
+.code-block{margin:10px 0;border-radius:8px;overflow:hidden;border:1px solid #2A2F45}
+.code-lang{background:#15182a;color:var(--muted);font-size:10.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:6px 12px;border-bottom:1px solid #2A2F45;font-family:'Inter',sans-serif}
 .bubble-card pre{
-  background:#0D1020;border:1px solid #2A2F45;
-  border-radius:8px;padding:12px 14px;
+  background:#0D1020;
+  border-radius:8px;padding:12px 14px;margin:0;
   overflow-x:auto;font-size:12.5px;line-height:1.6;
   font-family:'Fira Mono','Courier New',monospace;
-  color:#A5B4FC;margin:10px 0;white-space:pre;
+  color:#A5B4FC;white-space:pre;
 }
+.code-lang + pre{border-radius:0 0 8px 8px}
 .bubble-card code{font-family:'Fira Mono','Courier New',monospace;font-size:13px;color:#A5B4FC;background:#0D1020;padding:2px 6px;border-radius:4px}
 .bubble-card pre code{background:none;padding:0;color:inherit}
 .bubble-card p{margin-bottom:8px}
 .bubble-card p:last-child{margin-bottom:0}
+
+/* ── Markdown: títulos ── */
+.bubble-card h4,.bubble-card h5,.bubble-card h6{margin:14px 0 8px;font-weight:700;letter-spacing:-.2px;line-height:1.3}
+.bubble-card h4:first-child,.bubble-card h5:first-child,.bubble-card h6:first-child{margin-top:0}
+.bubble-card h4{font-size:17px}
+.bubble-card h5{font-size:15px}
+.bubble-card h6{font-size:13.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+
+/* ── Markdown: listas ── */
+.bubble-card ul,.bubble-card ol{margin:6px 0 10px;padding-left:22px}
+.bubble-card li{margin-bottom:5px;line-height:1.6}
+.bubble-card li:last-child{margin-bottom:0}
+.bubble-card ul li::marker{color:var(--accent)}
+.bubble-card ol li::marker{color:var(--accent);font-weight:600}
+
+/* ── Markdown: citação ── */
+.bubble-card blockquote{
+  margin:10px 0;padding:6px 14px;
+  border-left:3px solid var(--accent);
+  color:var(--muted);font-style:italic;
+  background:rgba(255,255,255,.03);border-radius:0 6px 6px 0;
+}
+
+/* ── Markdown: tabela ── */
+.bubble-card table.md-table{
+  width:100%;margin:10px 0;border-collapse:collapse;
+  font-size:13px;overflow:hidden;border-radius:8px;
+  border:1px solid var(--border);
+}
+.bubble-card table.md-table th,.bubble-card table.md-table td{
+  padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);
+}
+.bubble-card table.md-table th{background:rgba(255,255,255,.04);font-weight:700;color:var(--accent);font-size:12px;text-transform:uppercase;letter-spacing:.3px}
+.bubble-card table.md-table tr:last-child td{border-bottom:none}
+.bubble-card table.md-table tbody tr:hover{background:rgba(255,255,255,.02)}
+
+/* ── Markdown: links, hr, ênfase ── */
+.bubble-card a{color:var(--accent);text-decoration:underline;text-decoration-color:rgba(0,212,170,.4)}
+.bubble-card a:hover{text-decoration-color:var(--accent)}
+.bubble-card hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+.bubble-card em{color:inherit;opacity:.9}
+.msg-row.user .bubble-card blockquote{border-left-color:rgba(255,255,255,.6);color:rgba(255,255,255,.85)}
+.msg-row.user .bubble-card table.md-table th{color:#fff;background:rgba(255,255,255,.12)}
+.msg-row.user .bubble-card a{color:#fff}
 
 /* ── FILE CARD (estilo Claude) ── */
 .file-card-wrap{
@@ -306,7 +353,13 @@ Quando o usuário pedir para criar uma página, app, formulário, dashboard ou q
 4. Coloque TUDO em um único arquivo HTML
 5. Responda com uma breve explicação e depois o código HTML completo dentro de um bloco ```html ... ```
 
-Para outras perguntas, responda normalmente em português do Brasil.</textarea>
+Para outras perguntas, responda normalmente em português do Brasil, seguindo este estilo:
+- Vá direto ao ponto na primeira frase, sem repetir a pergunta nem fazer introdução longa.
+- Use Markdown completo quando ajudar a clareza: ## para títulos de seção, **negrito** para termos-chave, listas com - ou 1. quando houver múltiplos itens, > para citações, tabelas em Markdown para dados comparativos, e `código inline` ou blocos ```linguagem para código.
+- Prefira respostas curtas e objetivas; só se estenda quando o tema exigir profundidade técnica.
+- Para perguntas complexas, explique o raciocínio passo a passo de forma organizada antes da conclusão.
+- Evite floreios, desculpas excessivas e frases de preenchimento como "Ótima pergunta!" — comece já respondendo.
+- Se a pergunta for ambígua, faça no máximo uma pergunta de esclarecimento; senão, assuma a interpretação mais razoável e responda.</textarea>
   </div>
 </div>
 
@@ -537,28 +590,150 @@ function extractHTML(text) {
   return null;
 }
 
-// ── Render markdown-lite for AI bubbles ──
-function renderText(text) {
-  // escape HTML
-  let s = text
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;');
+// ── Render markdown completo para bolhas da IA ──
+function escapeHTML(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
-  // code blocks
-  s = s.replace(/```(?:html|js|css|javascript)?\n?([\s\S]*?)```/g,
-    (_,c) => `<pre><code>${c.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&')}</code></pre>`);
-
-  // inline code
-  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
-
-  // bold
+function renderInline(s) {
+  s = escapeHTML(s);
+  // código inline (protegido antes dos outros padrões)
+  s = s.replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
+  // negrito
   s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-
-  // newlines → <p> or <br>
-  s = s.split('\n\n').map(p => `<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
-
+  // itálico (evita pegar ** já processado)
+  s = s.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>');
+  // links [texto](url)
+  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener">$1</a>');
   return s;
+}
+
+function renderText(text) {
+  // 1. extrai blocos de código primeiro, com placeholders, pra não interferir no resto
+  const codeBlocks = [];
+  let working = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+    codeBlocks.push({ lang: lang || '', code: code.replace(/\n$/, '') });
+    return `\u0000CODE${codeBlocks.length - 1}\u0000`;
+  });
+
+  const lines = working.split('\n');
+  const html = [];
+  let para = [];
+  let listType = null; // 'ul' | 'ol' | null
+  let listItems = [];
+  let tableRows = [];
+  let inTable = false;
+
+  function flushPara() {
+    if (para.length) {
+      html.push(`<p>${renderInline(para.join(' '))}</p>`);
+      para = [];
+    }
+  }
+  function flushList() {
+    if (listItems.length) {
+      const tag = listType === 'ol' ? 'ol' : 'ul';
+      html.push(`<${tag}>${listItems.map(li => `<li>${renderInline(li)}</li>`).join('')}</${tag}>`);
+      listItems = [];
+      listType = null;
+    }
+  }
+  function flushTable() {
+    if (tableRows.length) {
+      const [headerRow, ...rest] = tableRows;
+      const bodyRows = rest.filter(r => !/^[\s|:-]+$/.test(r.join('')));
+      let t = '<table class="md-table"><thead><tr>';
+      headerRow.forEach(c => t += `<th>${renderInline(c.trim())}</th>`);
+      t += '</tr></thead><tbody>';
+      bodyRows.forEach(row => {
+        t += '<tr>' + row.map(c => `<td>${renderInline(c.trim())}</td>`).join('') + '</tr>';
+      });
+      t += '</tbody></table>';
+      html.push(t);
+      tableRows = [];
+      inTable = false;
+    }
+  }
+
+  for (let raw of lines) {
+    const trimmed = raw.trim();
+
+    // placeholder de bloco de código → fecha tudo que estava aberto e injeta
+    const codeMatch = trimmed.match(/^\u0000CODE(\d+)\u0000$/);
+    if (codeMatch) {
+      flushPara(); flushList(); flushTable();
+      const { lang, code } = codeBlocks[Number(codeMatch[1])];
+      const label = lang ? `<div class="code-lang">${lang}</div>` : '';
+      html.push(`<div class="code-block">${label}<pre><code>${escapeHTML(code)}</code></pre></div>`);
+      continue;
+    }
+
+    // linha vazia
+    if (trimmed === '') {
+      flushPara(); flushList(); flushTable();
+      continue;
+    }
+
+    // tabela markdown: linha com |
+    if (/\|/.test(trimmed)) {
+      const cells = trimmed.replace(/^\||\|$/g, '').split('|');
+      flushPara(); flushList();
+      tableRows.push(cells);
+      inTable = true;
+      continue;
+    } else if (inTable) {
+      flushTable();
+    }
+
+    // títulos
+    const h = trimmed.match(/^(#{1,4})\s+(.*)$/);
+    if (h) {
+      flushPara(); flushList(); flushTable();
+      const level = Math.min(h[1].length + 2, 6); // ## → h4, ### → h5 (mantém hierarquia visual dentro da bolha)
+      html.push(`<h${level}>${renderInline(h[2])}</h${level}>`);
+      continue;
+    }
+
+    // citação
+    if (/^>\s?/.test(trimmed)) {
+      flushPara(); flushList(); flushTable();
+      html.push(`<blockquote>${renderInline(trimmed.replace(/^>\s?/, ''))}</blockquote>`);
+      continue;
+    }
+
+    // lista não ordenada
+    const ul = trimmed.match(/^[-*]\s+(.*)$/);
+    if (ul) {
+      flushPara(); flushTable();
+      if (listType !== 'ul') { flushList(); listType = 'ul'; }
+      listItems.push(ul[1]);
+      continue;
+    }
+
+    // lista ordenada
+    const ol = trimmed.match(/^\d+\.\s+(.*)$/);
+    if (ol) {
+      flushPara(); flushTable();
+      if (listType !== 'ol') { flushList(); listType = 'ol'; }
+      listItems.push(ol[1]);
+      continue;
+    }
+
+    // linha horizontal
+    if (/^(-{3,}|\*{3,})$/.test(trimmed)) {
+      flushPara(); flushList(); flushTable();
+      html.push('<hr>');
+      continue;
+    }
+
+    // parágrafo normal (continua acumulando)
+    flushList(); flushTable();
+    para.push(trimmed);
+  }
+  flushPara(); flushList(); flushTable();
+
+  return html.join('');
 }
 
 // ── Add message bubble ──
