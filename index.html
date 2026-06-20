@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Paulo IA</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 110'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='100' y2='110'%3E%3Cstop offset='0%25' stop-color='%230d3878'/%3E%3Cstop offset='100%25' stop-color='%23050d1a'/%3E%3C/linearGradient%3E%3ClinearGradient id='s' x1='0' y1='0' x2='100' y2='110'%3E%3Cstop offset='0%25' stop-color='%2300eaff'/%3E%3Cstop offset='100%25' stop-color='%2300c8f8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='50,4 96,28 96,82 50,106 4,82 4,28' fill='url(%23g)' stroke='url(%23s)' stroke-width='4'/%3E%3Ctext x='50' y='72' text-anchor='middle' font-family='Arial' font-weight='900' font-size='46' fill='%23eef4ff'%3EP%3Ctspan fill='%2300eaff'%3EJ%3C/tspan%3E%3C/text%3E%3C/svg%3E"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -13,14 +14,20 @@
   --text:#F0F2F8;--muted:#7B82A0;--danger:#FF5C7A;
   --user-grad:linear-gradient(135deg,#6C63FF,#8B5CF6);
   --radius:16px;--rsm:10px;--shadow:0 4px 24px rgba(0,0,0,.4);
+
+  /* cores originais da logo PJ Tecnologia */
+  --pj-navy:#050d1a;--pj-blue1:#0a1f3d;--pj-blue2:#0d3878;
+  --pj-cyan:#00c8f8;--pj-cyan2:#00eaff;--pj-silver:#c8d8f0;
+  --pj-white:#eef4ff;--pj-gold:#f0a500;
+  --pj-grad:linear-gradient(145deg,var(--pj-blue2) 0%,var(--pj-navy) 100%);
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 
 /* HEADER */
 header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
 .brand{display:flex;align-items:center;gap:12px}
-.logo-wrap{width:40px;height:40px;border-radius:12px;background:var(--user-grad);display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px var(--glow);flex-shrink:0}
-.logo-wrap svg{width:22px;height:22px;fill:#fff}
+.logo-wrap{width:40px;height:40px;border-radius:12px;background:var(--pj-grad);border:1px solid rgba(0,200,248,.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(0,200,248,.35);flex-shrink:0}
+.logo-wrap svg{width:26px;height:28px}
 .brand-name{font-size:16px;font-weight:700;letter-spacing:-.3px}
 .brand-sub{font-size:11px;color:var(--muted);margin-top:1px}
 .status-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--muted);white-space:nowrap}
@@ -47,14 +54,27 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 #sys-prompt{width:100%;background:transparent;border:none;padding:10px 14px;font-size:13px;color:var(--text);resize:vertical;min-height:72px;max-height:140px;outline:none;font-family:'Inter',sans-serif;line-height:1.5}
 
 /* MESSAGES */
-#messages{flex:1;overflow-y:auto;padding:24px 20px;display:flex;flex-direction:column;gap:20px;scroll-behavior:smooth}
+#messages{flex:1;overflow-y:auto;padding:24px 20px;display:flex;flex-direction:column;gap:20px;scroll-behavior:smooth;position:relative}
 #messages::-webkit-scrollbar{width:4px}
 #messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 
+/* watermark da logo PJ ao fundo da área de mensagens */
+#bg-watermark{
+  position:fixed;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:min(60vw,460px);height:min(60vw,460px);
+  pointer-events:none;
+  z-index:0;
+  opacity:.05;
+}
+#bg-watermark svg{width:100%;height:100%}
+#messages > *{position:relative;z-index:1}
+
 /* empty */
 #empty-state{margin:auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
-.empty-icon{width:72px;height:72px;border-radius:20px;background:var(--user-grad);display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px var(--glow);margin:0 auto}
-.empty-icon svg{width:36px;height:36px;fill:#fff}
+.empty-icon{width:72px;height:72px;border-radius:20px;background:var(--pj-grad);border:1px solid rgba(0,200,248,.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(0,200,248,.4);margin:0 auto}
+.empty-icon svg{width:46px;height:50px}
 .empty-title{font-size:20px;font-weight:700;letter-spacing:-.3px}
 .empty-sub{font-size:13px;color:var(--muted);max-width:260px;line-height:1.6}
 .suggestion-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:4px}
@@ -224,10 +244,30 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 </head>
 <body>
 
+<!-- Marca-d'água PJ Tecnologia ao fundo da área de chat -->
+<div id="bg-watermark" aria-hidden="true">
+  <svg viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="50,4 96,28 96,82 50,106 4,82 4,28" fill="none" stroke="#00c8f8" stroke-width="2.5"/>
+    <polygon points="50,12 88,33 88,78 50,98 12,78 12,33" fill="none" stroke="#00c8f8" stroke-width="1"/>
+    <circle cx="50" cy="4" r="2" fill="#f0a500"/>
+    <text x="50" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="38" fill="#00eaff">P<tspan fill="#eef4ff">J</tspan></text>
+  </svg>
+</div>
+
 <header>
   <div class="brand">
     <div class="logo-wrap">
-      <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73A2 2 0 0 1 10 4a2 2 0 0 1 2-2zm-3 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>
+      <svg viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hdrStroke" x1="0" y1="0" x2="100" y2="110" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00eaff"/>
+            <stop offset="50%" stop-color="#0088cc"/>
+            <stop offset="100%" stop-color="#00c8f8"/>
+          </linearGradient>
+        </defs>
+        <polygon points="50,4 96,28 96,82 50,106 4,82 4,28" fill="rgba(0,200,248,.08)" stroke="url(#hdrStroke)" stroke-width="5"/>
+        <text x="50" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="44" fill="#eef4ff">P<tspan fill="#00eaff">J</tspan></text>
+      </svg>
     </div>
     <div>
       <div class="brand-name">Paulo IA</div>
@@ -273,7 +313,18 @@ Para outras perguntas, responda normalmente em português do Brasil.</textarea>
 <div id="messages">
   <div id="empty-state">
     <div class="empty-icon">
-      <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73A2 2 0 0 1 10 4a2 2 0 0 1 2-2zm-3 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>
+      <svg viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="emptyStroke" x1="0" y1="0" x2="100" y2="110" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00eaff"/>
+            <stop offset="50%" stop-color="#0088cc"/>
+            <stop offset="100%" stop-color="#00c8f8"/>
+          </linearGradient>
+        </defs>
+        <polygon points="50,4 96,28 96,82 50,106 4,82 4,28" fill="rgba(0,200,248,.08)" stroke="url(#emptyStroke)" stroke-width="4.5"/>
+        <circle cx="50" cy="4" r="2.5" fill="#00eaff"/>
+        <text x="50" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="42" fill="#eef4ff">P<tspan fill="#00eaff">J</tspan></text>
+      </svg>
     </div>
     <div>
       <div class="empty-title">Olá, Paulo!</div>
